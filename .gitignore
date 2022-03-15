@@ -10,3 +10,5 @@ yarn.lock
 .awcache
 public
 .env
+environment/
+kube-config/
