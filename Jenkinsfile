@@ -2,6 +2,8 @@ pipeline {
   agent any
   environment {
     imageName = 'jaimesalas/my-api-app:latest'
+    ec2Instance = 'ec2-13-36-172-245.eu-west-3.compute.amazonaws.com'
+    appPort = 80
   }
   stages {
     stage('Install dependencies') {
@@ -28,6 +30,24 @@ pipeline {
       }
     }
 
+    stage('E2E Tests') {
+      when {
+        branch 'staging'
+      }
+      agent {
+        docker {
+          image 'node:14-alpine'
+          reuseNode true 
+        }
+      }
+      environment {
+        BASE_API_URL = 'http://$ec2Instance:$appPor'
+      }
+      steps {
+        sh 'npm run test:e2e'
+      }
+    }
+
     stage('Build image & push it to DockerHub') {
       when {
         branch 'develop'
@@ -49,8 +69,6 @@ pipeline {
       }
       environment {
         containerName = 'my-api-app'
-        ec2Instance = 'ec2-13-36-172-245.eu-west-3.compute.amazonaws.com'
-        appPort = 80
       }
       steps {
         withCredentials(
