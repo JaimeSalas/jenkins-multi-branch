@@ -7,9 +7,11 @@ describe('api specs', () => {
     const a = 2;
     const b = 3;
     const url = `${envConstants.BASE_API_URL}/api/sum?a=${a}&b=${b}`;
+    console.log(url);
 
     // Act
     const { data } = await axios.get(url);
+    console.log(data);
 
     // Assert
     expect(data).toEqual('The result is 5');
