@@ -4,7 +4,7 @@ pipeline {
     booleanParam(name: 'CANARY_DEPLOYMENT', defaultValue: false, description: 'Deploy Canary?')
   }
   environment {
-    imageName = 'jaimesalas/my-api-app:latest'
+    imageName = 'jaimesalas/my-api-app'
     ec2Instance = 'ec2-13-36-172-245.eu-west-3.compute.amazonaws.com'
     appPort = 80
   }
@@ -106,6 +106,9 @@ pipeline {
           } else {
             versioningLatestAndPushImage(imageName, 'v1')
             cleanLocalImages(imageName, 'v1')
+            withKubeConfig([credentialsId: 'K8S-FILE', serverUrl: 'https://D4189ED7BF6ABB1E0C7B6886739AA0D5.yl4.eu-west-3.eks.amazonaws.com']) {
+              sh 'kubectl apply -f kube/app-deployment.yaml'
+            }
           }
         }
       }
