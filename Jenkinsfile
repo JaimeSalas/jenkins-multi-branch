@@ -29,6 +29,9 @@ pipeline {
     }
 
     stage('Build image & push it to DockerHub') {
+      when {
+        branch 'develop'
+      }
       steps {
         script {
           def dockerImage = docker.build(imageName)
@@ -37,6 +40,16 @@ pipeline {
             sh 'docker rmi $imageName'
           }
         }
+      }
+    }
+    stage('Deploy to server') {
+      when {
+        branch 'develop'
+      }
+      environment {
+        containerName = 'my-api-app'
+        ec2Instance = 'ec2-user@ec2-13-36-172-245.eu-west-3.compute.amazonaws.com'
+        appPort = 80
       }
     }
   }
