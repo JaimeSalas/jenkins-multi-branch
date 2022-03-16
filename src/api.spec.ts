@@ -14,6 +14,6 @@ describe('api specs', () => {
     console.log(data);
 
     // Assert
-    expect(data).toEqual('The result is 5');
+    expect(data).toEqual('The result is v2 5');
   });
 })
